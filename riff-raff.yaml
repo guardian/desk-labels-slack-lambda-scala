@@ -1,0 +1,17 @@
+stacks: [mobile]
+regions: [eu-west-1]
+templates:
+  desk-labels-slack-lambda:
+    type: aws-lambda
+    app: desk-labels-slack-lambda
+    contentDirectory: desk-labels-slack-lambda
+    parameters:
+      bucket: mobile-dist
+      functionNames: [desk-labels-slack-lambda-]
+      fileName:  desk-labels-slack-lambda.zip
+      prefixStack: false
+
+deployments:
+desk-labels-slack-lambda-upload:
+  template: desk-labels-slack-lambda
+  actions: [uploadLambda]
