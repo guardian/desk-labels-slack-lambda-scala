@@ -23,7 +23,7 @@ deployments:
       prependStackToCloudFormationStackName: false
       cloudFormationStackName: desk-labels-slack-lambda
       templatePath: cfn.yaml
-   desk-labels-slack-lambda-lambda-update:
+  desk-labels-slack-lambda-lambda-update:
     template: desk-labels-slack-lambda
-      actions: [updateLambda]
-      dependencies: [desk-labels-slack-lambda-cfn]
+    actions: [updateLambda]
+    dependencies: [desk-labels-slack-lambda-cfn]
