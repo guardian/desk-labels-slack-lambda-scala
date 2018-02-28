@@ -1,4 +1,4 @@
-name := "desk-labels-slack-lambda-scala"
+name := "desk-labels-slack-lambda"
 
 organization := "com.gu"
 
