@@ -15,15 +15,15 @@ deployments:
   desk-labels-slack-lambda-upload:
     template: desk-labels-slack-lambda
     actions: [uploadLambda]
-  desk-labels-slack-lambda-cfn:
-    type: cloud-formation
-    app: desk-labels-slack-lambda
-    dependencies: [desk-labels-slack-lambda-upload]
-    parameters:
-      prependStackToCloudFormationStackName: false
-      cloudFormationStackName: desk-labels-slack-lambda
-      templatePath: cfn.yaml
-  desk-labels-slack-lambda-lambda-update:
-    template: desk-labels-slack-lambda
-    actions: [updateLambda]
-    dependencies: [desk-labels-slack-lambda-cfn]
+#  desk-labels-slack-lambda-cfn:
+#    type: cloud-formation
+#    app: desk-labels-slack-lambda
+#    dependencies: [desk-labels-slack-lambda-upload]
+#    parameters:
+#      prependStackToCloudFormationStackName: false
+#      cloudFormationStackName: desk-labels-slack-lambda
+#      templatePath: cfn.yaml
+#  desk-labels-slack-lambda-lambda-update:
+#    template: desk-labels-slack-lambda
+#    actions: [updateLambda]
+#    dependencies: [desk-labels-slack-lambda-cfn]
