@@ -67,7 +67,7 @@ Resources:
           Stack: !Ref Stack
           App: !Ref App
       Description: Lambda that checks Desk.com for new labels and notifies Slack
-      Handler: com.gu.DeskLabelsLambda.Lambda::handler
+      Handler: com.gu.Lambda::handler
       MemorySize: 512
       Role: !GetAtt ExecutionRole.Arn
       Runtime: java8
