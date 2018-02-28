@@ -12,6 +12,6 @@ templates:
       prefixStack: false
 
 deployments:
-desk-labels-slack-lambda-upload:
-  template: desk-labels-slack-lambda
-  actions: [uploadLambda]
+  desk-labels-slack-lambda-upload:
+    template: desk-labels-slack-lambda
+    actions: [uploadLambda]
