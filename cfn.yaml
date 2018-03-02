@@ -21,6 +21,10 @@ Parameters:
     Description: Bucket where RiffRaff uploads artifacts on deploy
     Type: String
     Default: mobile-dist
+  LabelsBucket:
+    Description: Bucket where existing desk labels are stored
+    Type: String
+    Default: desk-labels-store
 
 Resources:
   ExecutionRole:
@@ -58,6 +62,22 @@ Resources:
                 - ssm:GetParametersByPath
               Effect: Allow
               Resource: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${Stage}/${Stack}/${App}
+        - PolicyName: bucketAccess
+          PolicyDocument:
+            Statement:
+              Action:
+                - s3:ListBucket
+              Effect: Allow
+              Resource: !Sub arn:aws:s3:::${LabelsBucket}
+        - PolicyName: bucketKeysAccess
+          PolicyDocument:
+            Statement:
+              Action:
+                - s3:PutObject
+                - s3:GetObject
+                - s3:DeleteObject
+              Effect: Allow
+              Resource: !Sub arn:aws:s3:::${LabelsBucket}/*
 
   DeskLambda:
     Type: AWS::Lambda::Function
