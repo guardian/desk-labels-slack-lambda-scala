@@ -18,8 +18,8 @@ object Lambda {
     val oldLabels = getOldLabelsFromS3()
     val added = newLabels.diff(oldLabels)
     val deleted = oldLabels.diff(newLabels)
-    logger.info(s"New labels = ${if (added.size == 0) added.size else added.mkString}")
-    logger.info(s"Deleted labels = ${if (deleted.size == 0) deleted.size else deleted.mkString}")
+    logger.info(s"New labels = ${if (added.isEmpty) added.size else added.mkString}")
+    logger.info(s"Deleted labels = ${if (deleted.isEmpty) deleted.size else deleted.mkString}")
 
     added.foreach(notifySlack(_))
     deleted.foreach(notifySlack(_, true))
