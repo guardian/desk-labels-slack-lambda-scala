@@ -99,3 +99,12 @@ Resources:
       Role: !GetAtt ExecutionRole.Arn
       Runtime: java8
       Timeout: 300
+  LambdaTrigger:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Runs DeskLambda every 5 mins during working hours
+      Name: desk-labels-lambda-schedule
+      ScheduleExpression: 0/5 8-19 ? * MON-FRI *
+      State: ENABLED
+      Targets:
+        - Ref: DeskLambda

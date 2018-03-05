@@ -83,10 +83,10 @@ object Lambda {
     }
     if (isDelete) {
       logger.info(s"Notifying slack of label $label deletion")
-      slackPost(s"Label DELETED: $label - scala")
+      slackPost(s"Label DELETED: $label")
     } else {
       logger.info(s"Notifying slack of label $label addition")
-      slackPost(s"New label ADDED: $label - scala")
+      slackPost(s"New label ADDED: $label")
     }
   }
 
