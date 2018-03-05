@@ -16,7 +16,7 @@ pass="<password>"
 
 s3 {
 bucket="<s3 bucket to store existing labels>"
-key=".csv file in s3 that stores the labels"
+key="<csv file in s3 that stores the labels>"
 }
 
 slack {
