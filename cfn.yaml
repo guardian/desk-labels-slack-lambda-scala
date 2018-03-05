@@ -107,4 +107,12 @@ Resources:
       ScheduleExpression: 0/5 8-19 ? * MON-FRI *
       State: ENABLED
       Targets:
-        - Ref: DeskLambda
+        - Id: DeskLambda
+          Arn: !GetAtt DeskLambda.Arn
+  DailyEventLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt DeskLambda.Arn
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt LambdaTrigger.Arn
