@@ -1,19 +1,12 @@
 package com.gu
 
-import com.amazonaws.auth.{AWSCredentialsProviderChain, DefaultAWSCredentialsProviderChain}
-import com.amazonaws.auth.profile.ProfileCredentialsProvider
-import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.model.S3Object
-import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import okhttp3._
 import org.slf4j.{Logger, LoggerFactory}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 
+import scala.annotation.tailrec
 import scala.io.Source
-
-case class SlackPayload(text: String)
-
-object SlackPayload { implicit val slackPayloadWrites = Json.writes[SlackPayload] }
 
 object Lambda {
 
@@ -21,7 +14,7 @@ object Lambda {
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
 
   def handler() = {
-    val newLabels = getLabelsFromResponse(getDeskResponse())
+    val newLabels = getAllDeskLabels()
     val oldLabels = getOldLabelsFromS3()
     val added = newLabels.diff(oldLabels)
     val deleted = oldLabels.diff(newLabels)
@@ -34,30 +27,16 @@ object Lambda {
     if (!added.isEmpty || !deleted.isEmpty) saveLabelsToS3(newLabels)
   }
 
-  def getDeskResponse(): Response = {
-    //TODO: Make this recursive for additional pages
-    logger.info("Retrieving labels from desk.com")
-    val req = new Request.Builder()
-      .url(new HttpUrl.Builder()
-        .scheme("https")
-          .host(Config.deskUrl)
-          .addPathSegment("api")
-          .addPathSegment("v2")
-          .addPathSegment("labels")
-          .addQueryParameter("per_page", "1000")
-          .build()
-      )
-      .addHeader("Accept", "application/json")
-      .addHeader("Authorization", Credentials.basic(Config.deskEmail, Config.deskPass))
-      .build
-    http.newCall(req).execute()
-  }
-
-  def getLabelsFromResponse(response: Response): List[String] = {
-    logger.info("Parsing new labels")
-    val json: JsValue = Json.parse(response.body().string())
-    val names = json \ "_embedded" \ "entries" \\ "name"
-    names.map(_.toString()).toList
+  def getAllDeskLabels(): List[String] = {
+    @tailrec
+    def recursiveLabelsGet(namesList: List[String], path: String): List[String] = {
+      val deskPage = DeskApiPage(path)(http, logger)
+      deskPage.nextPage match {
+        case None => namesList ::: deskPage.labels
+        case Some(url) => recursiveLabelsGet(namesList ::: deskPage.labels, url)
+      }
+    }
+    recursiveLabelsGet(List(), "/api/v2/labels?per_page=1000")
   }
 
   def getOldLabelsFromS3(): List[String] = {
@@ -96,16 +75,4 @@ object TestIt {
   def main(args: Array[String]): Unit = {
     Lambda.handler()
   }
-}
-
-object AWS {
-  val region = Option(Regions.getCurrentRegion).map(r => Regions.fromName(r.getName)).getOrElse(Regions.EU_WEST_1)
-  val s3Client = AmazonS3ClientBuilder
-    .standard()
-    .withRegion(region)
-    .withCredentials(new AWSCredentialsProviderChain(
-      new ProfileCredentialsProvider("mobile"),
-      new DefaultAWSCredentialsProviderChain
-      )
-    ).build()
 }
