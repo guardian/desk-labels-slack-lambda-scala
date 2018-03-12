@@ -21,8 +21,8 @@ object Lambda {
     logger.info(s"New labels = ${if (added.isEmpty) added.size else added.mkString}")
     logger.info(s"Deleted labels = ${if (deleted.isEmpty) deleted.size else deleted.mkString}")
 
-    added.foreach(notifySlack(_))
-    deleted.foreach(notifySlack(_, true))
+    added.foreach(notifyHangouts(_))
+    deleted.foreach(notifyHangouts(_, true))
 
     if (!added.isEmpty || !deleted.isEmpty) saveLabelsToS3(newLabels)
   }
@@ -52,20 +52,20 @@ object Lambda {
     AWS.s3Client.putObject(Config.s3Bucket, Config.s3Key, labels.mkString(","))
   }
 
-  def notifySlack(label: String, isDelete: Boolean = false) = {
-    def slackPost(message: String): Response = {
+  def notifyHangouts(label: String, isDelete: Boolean = false) = {
+    def hangoutsPost(message: String): Response = {
       val post = new Request.Builder()
-        .url(Config.slackUrl)
-        .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), Json.toJson(SlackPayload(message)).toString()))
+        .url(Config.hangoutsUrl)
+        .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), Json.toJson(HangoutsPayload(message)).toString()))
         .build()
       http.newCall(post).execute()
     }
     if (isDelete) {
       logger.info(s"Notifying slack of label $label deletion")
-      slackPost(s"Label DELETED: $label")
+      hangoutsPost(s"Label DELETED: $label")
     } else {
       logger.info(s"Notifying slack of label $label addition")
-      slackPost(s"New label ADDED: $label")
+      hangoutsPost(s"New label ADDED: $label")
     }
   }
 

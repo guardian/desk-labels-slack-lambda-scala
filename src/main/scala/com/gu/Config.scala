@@ -14,6 +14,6 @@ object Config {
   val deskPass = config.getString("desk.pass")
   val s3Bucket = config.getString("s3.bucket")
   val s3Key = config.getString("s3.key")
-  val slackUrl = config.getString("slack.url")
+  val hangoutsUrl = config.getString("hangouts.url")
 
 }

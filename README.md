@@ -1,6 +1,6 @@
 # Desk Labels Slack Lambda
 
-An AWS Lambda to notify Slack when new labels are created in Desk.com, written in Scala
+An AWS Lambda to notify Hangouts Chat (formerly this used Slack) when new labels are created in Desk.com, written in Scala
 
 # Running locally
 
@@ -19,7 +19,7 @@ bucket="<s3 bucket to store existing labels>"
 key="<csv file in s3 that stores the labels>"
 }
 
-slack {
+hangouts {
 url="<ulr for Slack integration>"
 }
 EOF
