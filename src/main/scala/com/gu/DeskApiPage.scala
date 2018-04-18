@@ -12,7 +12,12 @@ case class DeskApiPage(path: String)(implicit http: OkHttpClient, logger: Logger
       .addHeader("Accept", "application/json")
       .addHeader("Authorization", Credentials.basic(Config.deskEmail, Config.deskPass))
       .build).execute()
-    Json.parse(response.body().string())
+    if (response.isSuccessful) {
+      Json.parse(response.body().string())
+    } else {
+      logger.error(s"Unexpected desk.com response: ${response.code()} | ${response.message()}")
+      throw new UnexpectedDeskResponseException(s"Desk.com response code: ${response.code()}")
+    }
   }
 
   val labels: List[String] = {
@@ -22,4 +27,7 @@ case class DeskApiPage(path: String)(implicit http: OkHttpClient, logger: Logger
   }
 
   val nextPage: Option[String] = (js \ "_links" \ "next" \ "href").asOpt[String]
+
 }
+
+class UnexpectedDeskResponseException(msg: String) extends Exception
