@@ -53,9 +53,18 @@ object Lambda {
   }
 
   def notifyHangouts(label: String, isDelete: Boolean = false) = {
+    val hangoutsEndpoint = {
+      if (Config.appsLabelPrefixes.contains(label.stripPrefix("\"").stripSuffix("\"").take(3))) {
+        logger.info(s"Using apps webhook for $label")
+        Config.appsHangoutsUrl
+      } else {
+        logger.info(s"Using userhelp webhook for $label")
+        Config.hangoutsUrl
+      }
+    }
     def hangoutsPost(message: String): Response = {
       val post = new Request.Builder()
-        .url(Config.hangoutsUrl)
+        .url(hangoutsEndpoint)
         .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), Json.toJson(HangoutsPayload(message)).toString()))
         .build()
       http.newCall(post).execute()
