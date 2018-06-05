@@ -15,5 +15,11 @@ object Config {
   val s3Bucket = config.getString("s3.bucket")
   val s3Key = config.getString("s3.key")
   val hangoutsUrl = config.getString("hangouts.url")
+  val appsHangoutsUrl = config.getString("hangouts.appsUrl")
 
+  val appsLabelPrefixes: List[String] = List(
+    "INA",
+    "ANA",
+    "IDE"
+  )
 }
