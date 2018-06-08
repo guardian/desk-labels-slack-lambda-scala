@@ -52,19 +52,20 @@ object Lambda {
     AWS.s3Client.putObject(Config.s3Bucket, Config.s3Key, labels.mkString(","))
   }
 
-  def notifyHangouts(label: String, isDelete: Boolean = false) = {
-    val hangoutsEndpoint = {
-      if (Config.appsLabelPrefixes.contains(label.stripPrefix("\"").stripSuffix("\"").take(3))) {
-        logger.info(s"Using apps webhook for $label")
-        Config.appsHangoutsUrl
-      } else {
-        logger.info(s"Using userhelp webhook for $label")
-        Config.hangoutsUrl
-      }
+  def getHangoutsEndpoint(label: String) = {
+    if (Config.appsLabelPrefixes.contains(label.stripPrefix("\"").stripSuffix("\"").take(3))) {
+      logger.info(s"Using apps webhook for $label")
+      Config.appsHangoutsUrl
+    } else {
+      logger.info(s"Using userhelp webhook for $label")
+      Config.hangoutsUrl
     }
+  }
+
+  def notifyHangouts(label: String, isDelete: Boolean = false) = {
     def hangoutsPost(message: String): Response = {
       val post = new Request.Builder()
-        .url(hangoutsEndpoint)
+        .url(getHangoutsEndpoint(label))
         .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), Json.toJson(HangoutsPayload(message)).toString()))
         .build()
       http.newCall(post).execute()
