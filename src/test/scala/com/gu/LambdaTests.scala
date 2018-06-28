@@ -9,6 +9,7 @@ class LambdaTests extends FunSuite with Matchers {
   }
 
   test("Non apps labels go to userhelp endpoint") {
+    println(s"HANGOUTS URL = ${Config.hangoutsUrl}")
     Lambda.getHangoutsEndpoint("NON apps url") should be (Config.hangoutsUrl)
   }
 

@@ -1,12 +1,15 @@
 package com.gu
 
-import com.gu.conf.{ConfigurationLoader, SSMConfigurationLocation}
+import java.io.File
+
+import com.gu.conf.{ConfigurationLoader, FileConfigurationLocation, SSMConfigurationLocation}
 
 object Config {
 
   val identity = AppIdentity.whoAmI(defaultAppName = "desk-labels-slack-lambda")
   val config = ConfigurationLoader.load(identity) {
-    case identity: AwsIdentity => SSMConfigurationLocation.default(identity)
+    case AwsIdentity(app, stack, stage, _) => SSMConfigurationLocation(s"$stage/$stack/$app")
+    case DevIdentity(app) if sys.props("testing") == "true" => FileConfigurationLocation(new File("unit-test.conf"))
   }
 
   val deskUrl = config.getString("desk.url")

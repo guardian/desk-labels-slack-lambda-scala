@@ -17,6 +17,8 @@ scalacOptions ++= Seq(
 
 val circeVersion = "0.7.0"
 
+testOptions += Tests.Setup(_ => sys.props("testing") = "true")
+
 resolvers += "Guardian Platform Bintray" at "https://dl.bintray.com/guardian/platforms"
 
 libraryDependencies ++= Seq(
@@ -25,7 +27,7 @@ libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.3.2",
   "org.scalatest" %% "scalatest" % "3.0.5" % "test",
   "com.squareup.okhttp3" % "okhttp" % "3.10.0",
-  "com.gu" %% "simple-configuration-ssm" % "1.4.1",
+  "com.gu" %% "simple-configuration-ssm" % "1.5.0",
   "com.typesafe.play" %% "play-json" % "2.6.7",
   "com.amazonaws" % "aws-java-sdk-s3" % "1.11.288"
 )
