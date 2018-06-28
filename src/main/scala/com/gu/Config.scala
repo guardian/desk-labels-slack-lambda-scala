@@ -8,7 +8,7 @@ object Config {
 
   val identity = AppIdentity.whoAmI(defaultAppName = "desk-labels-slack-lambda")
   val config = ConfigurationLoader.load(identity) {
-    case AwsIdentity(app, stack, stage, _) => SSMConfigurationLocation(s"$stage/$stack/$app")
+    case AwsIdentity(app, stack, stage, _) => SSMConfigurationLocation(s"/$stage/$stack/$app")
     case DevIdentity(app) if sys.props("testing") == "true" => FileConfigurationLocation(new File("unit-test.conf"))
   }
 
